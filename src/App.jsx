@@ -4,6 +4,8 @@ import { useState } from "react";
 function App() {
   const [allTask, setAllTask]=useState([])
   const [taskTitle, setTaskTitle]= useState("")
+  const [searchText, setSearchText]= useState("")
+  
 
   useEffect(()=>{
     const storedTask = JSON.parse(localStorage.getItem("allTask")) || []
@@ -45,6 +47,7 @@ const handleTaskDelete= (id)=>{
     setAllTask(taskAfterDeleted)
     localStorage.setItem("allTask", JSON.stringify(taskAfterDeleted))
 }
+
   return (
     <div className="min-h-screen flex justify-center items-center py-6 bg-gradient-to-br from-cyan-500 to-blue-500">
       {/* body  */}
@@ -57,6 +60,7 @@ const handleTaskDelete= (id)=>{
               type="text"
               placeholder="Search here"
               className="input input-bordered w-full max-w-xs"
+              onChange={(e)=>setSearchText(e.target.value)}
             />
           </div>
         </div>
@@ -79,7 +83,7 @@ const handleTaskDelete= (id)=>{
         <div className="mt-4">
           <ul className="p-2">
             {
-              allTask?.map((singleTask, id)=>(
+              allTask?.filter(singleTask=>singleTask.title.toLowerCase().includes(searchText.toLocaleLowerCase())).map((singleTask, id)=>(
                 <li key={id} className="flex justify-between items-center p-2 bg-gray-100 rounded-lg mt-1">
               <span onClick={()=>handleIsDone(singleTask?.id)} className={`material-symbols-outlined hover:cursor-pointer ${singleTask.isDone ? "text-green-500" : "text-red-500"}`}>
                 {singleTask?.isDone? "check_circle" :"radio_button_unchecked"}
