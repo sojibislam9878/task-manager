@@ -27,6 +27,15 @@ function App() {
     localStorage.setItem("allTask", JSON.stringify(newAllTask))
     
   }
+
+  const handleIsDone=(id)=>{
+    console.log(id);
+    setAllTask(
+      allTask.map(singleTask=>
+        singleTask?.id == id ? {...singleTask, isDone:!singleTask?.isDone} : singleTask
+      )
+    )
+ }
   return (
     <div className="min-h-screen flex justify-center items-center py-6 bg-gradient-to-br from-cyan-500 to-blue-500">
       {/* body  */}
@@ -63,10 +72,10 @@ function App() {
             {
               allTask?.map((singleTask, id)=>(
                 <li key={id} className="flex justify-between items-center p-2 bg-gray-100 rounded-lg mt-1">
-              <span className="material-symbols-outlined hover:cursor-pointer text-[#ff605a]">
-                radio_button_unchecked
+              <span onClick={()=>handleIsDone(singleTask?.id)} className={`material-symbols-outlined hover:cursor-pointer ${singleTask.isDone ? "text-green-500" : "text-red-500"}`}>
+                {singleTask?.isDone? "check_circle" :"radio_button_unchecked"}
               </span>
-              <span className="text-xl font-bold capitalize">{singleTask.title}</span> <span className="material-symbols-outlined hover:cursor-pointer text-red-600">delete</span>
+              <span className={`text-xl font-bold capitalize ${singleTask?.isDone && "line-through"}`}>{singleTask?.title}</span> <span className="material-symbols-outlined hover:cursor-pointer text-red-600">delete</span>
             </li>
               ))
             }
