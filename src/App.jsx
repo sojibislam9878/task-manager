@@ -1,6 +1,9 @@
 import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd";
 import { useEffect } from "react";
 import { useState } from "react";
+import Swal from "sweetalert2";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
   const [allTask, setAllTask]=useState([])
@@ -15,7 +18,16 @@ function App() {
 
   const handleAddTask=()=>{
     if (taskTitle === "") {
-      return alert("faka jinish colbe na")
+      return toast.error('Please Write Something', {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        });
     }
     const task={
       id:Date.now(),
@@ -28,7 +40,16 @@ function App() {
     console.log(newAllTask);
     setTaskTitle("")
     localStorage.setItem("allTask", JSON.stringify(newAllTask))
-    
+    toast.success('Task Added!', {
+      position: "top-right",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+      });
   }
 
   const handleIsDone=(id)=>{
@@ -42,11 +63,29 @@ function App() {
 
 const handleTaskDelete= (id)=>{
     console.log(id);
-    const taskAfterDeleted= allTask.filter(singleTask=> singleTask.id !== id)
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const taskAfterDeleted= allTask.filter(singleTask=> singleTask.id !== id)
     console.log(taskAfterDeleted);
     
     setAllTask(taskAfterDeleted)
     localStorage.setItem("allTask", JSON.stringify(taskAfterDeleted))
+        Swal.fire({
+          title: "Deleted!",
+          text: "Your task has been deleted.",
+          icon: "success"
+        });
+      }
+    });
+    
 }
 
 const handleDragEnd = (result) => {
@@ -145,6 +184,7 @@ const handleDragEnd = (result) => {
           </Droppable>
       </div>
       </DragDropContext>
+      <ToastContainer />
     </div>
   );
 }
