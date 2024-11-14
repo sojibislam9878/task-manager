@@ -1,4 +1,32 @@
+import { useEffect } from "react";
+import { useState } from "react";
+
 function App() {
+  const [allTask, setAllTask]=useState([])
+  const [taskTitle, setTaskTitle]= useState("")
+
+  useEffect(()=>{
+    const storedTask = JSON.parse(localStorage.getItem("allTask")) || []
+    setAllTask(storedTask)
+  },[])
+
+  const handleAddTask=()=>{
+    if (taskTitle === "") {
+      return alert("faka jinish colbe na")
+    }
+    const task={
+      id:Date.now(),
+      title:taskTitle,
+      isDone:false,
+      priority:1
+    }
+    const newAllTask = [...allTask, task]
+    setAllTask(newAllTask)
+    console.log(newAllTask);
+    setTaskTitle("")
+    localStorage.setItem("allTask", JSON.stringify(newAllTask))
+    
+  }
   return (
     <div className="min-h-screen flex justify-center items-center py-6 bg-gradient-to-br from-cyan-500 to-blue-500">
       {/* body  */}
@@ -20,8 +48,11 @@ function App() {
             <input
               className=" join-item outline-none border-2 border-r-0 rounded-l-full pl-3 w-full bg-gray-200"
               placeholder="Write something"
+              value={taskTitle}
+              onChange={(e)=>setTaskTitle(e.target.value)
+              }
             />
-            <button className="btn join-item rounded-r-full px-8 bg-[#ff605a] text-white hover:bg-[#f34a44]">
+            <button onClick={handleAddTask} className="btn join-item rounded-r-full px-8 bg-[#ff605a] text-white hover:bg-[#f34a44]">
               Add
             </button>
           </div>
@@ -29,12 +60,16 @@ function App() {
         {/* task list  */}
         <div className="mt-4">
           <ul className="p-2">
-            <li className="flex justify-between">
-              <span class="material-symbols-outlined hover:cursor-pointer">
+            {
+              allTask?.map((singleTask, id)=>(
+                <li key={id} className="flex justify-between items-center p-2 bg-gray-100 rounded-lg mt-1">
+              <span className="material-symbols-outlined hover:cursor-pointer text-[#ff605a]">
                 radio_button_unchecked
               </span>
-              hello <span class="material-symbols-outlined hover:cursor-pointer">delete</span>
+              <span className="text-xl font-bold capitalize">{singleTask.title}</span> <span className="material-symbols-outlined hover:cursor-pointer text-red-600">delete</span>
             </li>
+              ))
+            }
           </ul>
         </div>
       </div>
