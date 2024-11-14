@@ -35,6 +35,16 @@ function App() {
     setAllTask(changedTask)
     localStorage.setItem("allTask", JSON.stringify(changedTask))
  }
+
+
+const handleTaskDelete= (id)=>{
+    console.log(id);
+    const taskAfterDeleted= allTask.filter(singleTask=> singleTask.id !== id)
+    console.log(taskAfterDeleted);
+    
+    setAllTask(taskAfterDeleted)
+    localStorage.setItem("allTask", JSON.stringify(taskAfterDeleted))
+}
   return (
     <div className="min-h-screen flex justify-center items-center py-6 bg-gradient-to-br from-cyan-500 to-blue-500">
       {/* body  */}
@@ -74,7 +84,7 @@ function App() {
               <span onClick={()=>handleIsDone(singleTask?.id)} className={`material-symbols-outlined hover:cursor-pointer ${singleTask.isDone ? "text-green-500" : "text-red-500"}`}>
                 {singleTask?.isDone? "check_circle" :"radio_button_unchecked"}
               </span>
-              <span className={`text-xl font-bold capitalize ${singleTask?.isDone && "line-through"}`}>{singleTask?.title}</span> <span className="material-symbols-outlined hover:cursor-pointer text-red-600">delete</span>
+              <span className={`text-xl font-bold capitalize ${singleTask?.isDone && "line-through"}`}>{singleTask?.title}</span> <span onClick={()=>handleTaskDelete(singleTask?.id)} className="material-symbols-outlined hover:cursor-pointer text-red-600">delete</span>
             </li>
               ))
             }
