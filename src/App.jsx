@@ -1,3 +1,4 @@
+import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd";
 import { useEffect } from "react";
 import { useState } from "react";
 
@@ -48,9 +49,22 @@ const handleTaskDelete= (id)=>{
     localStorage.setItem("allTask", JSON.stringify(taskAfterDeleted))
 }
 
+const handleDragEnd = (result) => {
+  const { source, destination } = result;
+  if (!destination) return;
+  if (source.index === destination.index) return;
+  const reorderedTasks = Array.from(allTask);
+  const [movedTask] = reorderedTasks.splice(source.index, 1);
+  reorderedTasks.splice(destination.index, 0, movedTask);
+
+  setAllTask(reorderedTasks);
+  localStorage.setItem("allTask", JSON.stringify(reorderedTasks));
+};
+
   return (
     <div className="min-h-screen flex justify-center items-center py-6 bg-gradient-to-br from-cyan-500 to-blue-500">
       {/* body  */}
+      <DragDropContext onDragEnd={handleDragEnd}>
       <div className=" min-h-3/4 w-3/4 bg-white rounded-xl p-8">
         {/* title and search  */}
         <div className="flex justify-between">
@@ -80,21 +94,57 @@ const handleTaskDelete= (id)=>{
           </div>
         </div>
         {/* task list  */}
-        <div className="mt-4">
-          <ul className="p-2">
-            {
-              allTask?.filter(singleTask=>singleTask.title.toLowerCase().includes(searchText.toLocaleLowerCase())).map((singleTask, id)=>(
-                <li key={id} className="flex justify-between items-center p-2 bg-gray-100 rounded-lg mt-1">
-              <span onClick={()=>handleIsDone(singleTask?.id)} className={`material-symbols-outlined hover:cursor-pointer ${singleTask.isDone ? "text-green-500" : "text-red-500"}`}>
-                {singleTask?.isDone? "check_circle" :"radio_button_unchecked"}
-              </span>
-              <span className={`text-xl font-bold capitalize ${singleTask?.isDone && "line-through"}`}>{singleTask?.title}</span> <span onClick={()=>handleTaskDelete(singleTask?.id)} className="material-symbols-outlined hover:cursor-pointer text-red-600">delete</span>
-            </li>
-              ))
-            }
-          </ul>
-        </div>
+        <Droppable droppableId="tasks">
+            {(provided) => (
+              <ul
+                className="p-2"
+                {...provided.droppableProps}
+                ref={provided.innerRef}
+              >
+                {allTask
+                  .filter((singleTask) =>
+                    singleTask.title.toLowerCase().includes(searchText.toLowerCase())
+                  )
+                  .map((singleTask, index) => (
+                    <Draggable key={singleTask.id} draggableId={String(singleTask.id)} index={index}>
+                      {(provided) => (
+                        <li
+                          className="flex justify-between items-center p-2 bg-gray-100 rounded-lg mt-1"
+                          ref={provided.innerRef}
+                          {...provided.draggableProps}
+                          {...provided.dragHandleProps}
+                        >
+                          <span
+                            onClick={() => handleIsDone(singleTask.id)}
+                            className={`material-symbols-outlined hover:cursor-pointer ${
+                              singleTask.isDone ? "text-green-500" : "text-red-500"
+                            }`}
+                          >
+                            {singleTask.isDone ? "check_circle" : "radio_button_unchecked"}
+                          </span>
+                          <span
+                            className={`text-xl font-bold capitalize ${
+                              singleTask.isDone && "line-through"
+                            }`}
+                          >
+                            {singleTask.title}
+                          </span>
+                          <span
+                            onClick={() => handleTaskDelete(singleTask.id)}
+                            className="material-symbols-outlined hover:cursor-pointer text-red-600"
+                          >
+                            delete
+                          </span>
+                        </li>
+                      )}
+                    </Draggable>
+                  ))}
+                {provided.placeholder}
+              </ul>
+            )}
+          </Droppable>
       </div>
+      </DragDropContext>
     </div>
   );
 }
