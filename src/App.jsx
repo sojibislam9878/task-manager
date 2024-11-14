@@ -30,11 +30,10 @@ function App() {
 
   const handleIsDone=(id)=>{
     console.log(id);
-    setAllTask(
-      allTask.map(singleTask=>
-        singleTask?.id == id ? {...singleTask, isDone:!singleTask?.isDone} : singleTask
-      )
-    )
+    const changedTask = allTask.map(singleTask=>singleTask.id ===id ? {...singleTask, isDone:!singleTask?.isDone} : singleTask)
+
+    setAllTask(changedTask)
+    localStorage.setItem("allTask", JSON.stringify(changedTask))
  }
   return (
     <div className="min-h-screen flex justify-center items-center py-6 bg-gradient-to-br from-cyan-500 to-blue-500">
