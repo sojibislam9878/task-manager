@@ -87,6 +87,12 @@ function App() {
     });
   };
 
+  const handleEnterKey=(e)=>{
+    if (e.key === "Enter") {
+      handleAddTask()
+    }
+  }
+
   const handleDragEnd = (result) => {
     const { source, destination } = result;
     if (!destination) return;
@@ -124,6 +130,7 @@ function App() {
                 placeholder="Write something"
                 value={taskTitle}
                 onChange={(e) => setTaskTitle(e.target.value)}
+                onKeyDown={handleEnterKey}
               />
               <button
                 onClick={handleAddTask}
